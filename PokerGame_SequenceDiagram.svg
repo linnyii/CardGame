@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 18px; font-weight: bold; text-anchor: middle; }
+      .participant { font-family: Arial, sans-serif; font-size: 12px; text-anchor: middle; }
+      .message { font-family: Arial, sans-serif; font-size: 11px; }
+      .note { font-family: Arial, sans-serif; font-size: 10px; font-style: italic; }
+      .lifeline { stroke: #333; stroke-width: 1; }
+      .message-line { stroke: #333; stroke-width: 1; }
+      .activation { fill: #e0e0e0; }
+      .note-box { fill: #ffffcc; stroke: #cccc00; stroke-width: 1; }
+      .participant-box { fill: #f0f0f0; stroke: #333; stroke-width: 1; }
+    </style>
+  </defs>
+  
+  <!-- Title -->
+  <text x="600" y="30" class="title">Poker Game Sequence Diagram</text>
+  
+  <!-- Participants -->
+  <rect x="100" y="60" width="80" height="30" class="participant-box"/>
+  <text x="140" y="80" class="participant">Main</text>
+  
+  <rect x="250" y="60" width="80" height="30" class="participant-box"/>
+  <text x="290" y="80" class="participant">PokerGame</text>
+  
+  <rect x="400" y="60" width="80" height="30" class="participant-box"/>
+  <text x="440" y="80" class="participant">PokerDeck</text>
+  
+  <rect x="550" y="60" width="80" height="30" class="participant-box"/>
+  <text x="590" y="80" class="participant">Player</text>
+  
+  <!-- Lifelines -->
+  <line x1="140" y1="90" x2="140" y2="750" class="lifeline"/>
+  <line x1="290" y1="90" x2="290" y2="750" class="lifeline"/>
+  <line x1="440" y1="90" x2="440" y2="750" class="lifeline"/>
+  <line x1="590" y1="90" x2="590" y2="750" class="lifeline"/>
+  
+  <!-- Game Initialization Phase -->
+  <rect x="135" y="110" width="10" height="60" class="activation"/>
+  <line x1="140" y1="110" x2="290" y2="110" class="message-line"/>
+  <text x="215" y="105" class="message">StartGame()</text>
+  
+  <!-- Note: Game Initialization -->
+  <rect x="300" y="130" width="150" height="30" class="note-box"/>
+  <text x="375" y="145" class="note">Game Initialization Phase</text>
+  
+  <!-- Loop for 4 Players Creation -->
+  <rect x="200" y="165" width="420" height="80" fill="none" stroke="#0066cc" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="210" y="180" class="note">Loop [for each of 4 players]</text>
+  
+  <rect x="285" y="195" width="10" height="40" class="activation"/>
+  <line x1="290" y1="195" x2="590" y2="195" class="message-line"/>
+  <text x="440" y="190" class="message">CreatePlayer()</text>
+  <line x1="590" y1="210" x2="290" y2="210" class="message-line"/>
+  <text x="440" y="225" class="message">Player created</text>
+  
+  <!-- Shuffle Deck -->
+  <rect x="285" y="260" width="10" height="20" class="activation"/>
+  <line x1="290" y1="260" x2="440" y2="260" class="message-line"/>
+  <text x="365" y="255" class="message">shuffle()</text>
+  <line x1="440" y1="270" x2="290" y2="270" class="message-line"/>
+  <text x="365" y="285" class="message">Deck shuffled</text>
+  
+  <!-- Note: Dealing Phase -->
+  <rect x="300" y="300" width="180" height="30" class="note-box"/>
+  <text x="390" y="315" class="note">Dealing Phase (All 52 cards distributed)</text>
+  
+  <!-- Dealing Cards - Loop 13 rounds, each round loops 4 players -->
+  <rect x="200" y="340" width="420" height="120" fill="none" stroke="#0066cc" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="210" y="355" class="note">Loop [13 rounds]</text>
+  
+  <rect x="220" y="370" width="380" height="75" fill="none" stroke="#ff9900" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="230" y="385" class="note">Loop [for each of 4 players]</text>
+  
+  <rect x="285" y="400" width="10" height="30" class="activation"/>
+  <line x1="290" y1="400" x2="440" y2="400" class="message-line"/>
+  <text x="365" y="395" class="message">DealingCard()</text>
+  <line x1="440" y1="410" x2="590" y2="410" class="message-line"/>
+  <text x="515" y="405" class="message">DrawCard()</text>
+  <line x1="590" y1="420" x2="290" y2="420" class="message-line"/>
+  <text x="440" y="435" class="message">Card received</text>
+  
+  <!-- Note: 13 Rounds Begin -->
+  <rect x="300" y="480" width="120" height="30" class="note-box"/>
+  <text x="360" y="495" class="note">13 Rounds Begin</text>
+  
+  <!-- Round Loop -->
+  <rect x="200" y="520" width="420" height="200" fill="none" stroke="#ff0000" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="210" y="535" class="note">Loop [13 rounds]</text>
+  
+  <rect x="300" y="545" width="80" height="20" class="note-box"/>
+  <text x="340" y="557" class="note">Round starts</text>
+  
+  <!-- All players play cards (Loop) -->
+  <rect x="220" y="575" width="380" height="70" fill="none" stroke="#ff9900" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="230" y="590" class="note">Loop [for each of 4 players]</text>
+  
+  <rect x="285" y="605" width="10" height="30" class="activation"/>
+  <line x1="290" y1="605" x2="590" y2="605" class="message-line"/>
+  <text x="440" y="600" class="message">PlayCard()</text>
+  <line x1="590" y1="620" x2="290" y2="620" class="message-line"/>
+  <text x="440" y="635" class="message">Card played (hidden)</text>
+  
+  <!-- Reveal and Compare -->
+  <rect x="300" y="655" width="140" height="30" class="note-box"/>
+  <text x="370" y="670" class="note">Reveal and Compare</text>
+  
+  <rect x="285" y="690" width="10" height="15" class="activation"/>
+  <text x="300" y="702" class="message">Compare cards & Award point</text>
+  
+  <!-- Final calculation -->
+  <rect x="285" y="735" width="10" height="15" class="activation"/>
+  <text x="300" y="747" class="message">Calculate final scores</text>
+  
+  <line x1="290" y1="760" x2="140" y2="760" class="message-line"/>
+  <text x="215" y="755" class="message">Display winner</text>
+</svg>
+
