@@ -1,52 +1,52 @@
 ﻿using CardGame.Games;
 using CardGame.Players;
+using CardGame.Services;
 
 namespace CardGame;
 
 public static class Program
 {
     private const int DefaultPlayerCount = 4;
+    private static readonly IConsoleGameUi UI = new ConsoleConsoleGameUi();
+    private static readonly IConsoleInput ConsoleInput = new ConsoleConsoleInput(UI);
 
     private static void Main()
     {
-        Console.WriteLine("╔════════════════════════════════════╗");
-        Console.WriteLine("║     Welcome to the Card Game       ║");
-        Console.WriteLine("╚════════════════════════════════════╝");
+        UI.DisplayLine("╔════════════════════════════════════╗");
+        UI.DisplayLine("║     Welcome to the Card Game       ║");
+        UI.DisplayLine("╚════════════════════════════════════╝");
 
         while (true)
         {
-            Console.WriteLine("\n請選擇遊戲:");
-            Console.WriteLine("1. Uno 遊戲");
-            Console.WriteLine("2. 撲克遊戲");
-            Console.WriteLine("3. 退出");
-            Console.Write("\n請輸入選項 (1-3): ");
+            UI.DisplayEmptyLine();
+            UI.DisplayLine("Select a game:");
+            UI.DisplayLine("1. UNO Game");
+            UI.DisplayLine("2. Poker Game");
+            UI.DisplayLine("3. Exit");
 
-            var choice = Console.ReadLine();
+            var choice = ConsoleInput.GetMenuChoice("\nEnter your choice (1-3): ", 1, 3);
 
             switch (choice)
             {
-                case "1":
+                case 1:
                     PlayUnoGame();
                     break;
-                case "2":
+                case 2:
                     PlayPokerGame();
                     break;
-                case "3":
-                    Console.WriteLine("\n感謝遊玩！再見！");
+                case 3:
+                    UI.DisplayLine("\nThank you for playing! Goodbye!");
                     return;
-                default:
-                    Console.WriteLine("\n無效的選項，請重新選擇。");
-                    break;
             }
         }
     }
 
     private static void PlayUnoGame()
     {
-        Console.WriteLine("\n=== 創建 Uno 遊戲 ===");
+        UI.DisplaySection("Creating UNO Game");
         
         var players = CreatePlayers();
-        var game = new UnoGame();
+        var game = new UnoGame(UI, ConsoleInput);
         
         JoinGame(players, game);
         game.StartGame();
@@ -62,10 +62,10 @@ public static class Program
 
     private static void PlayPokerGame()
     {
-        Console.WriteLine("\n=== 創建撲克遊戲 ===");
+        UI.DisplaySection("Creating Poker Game");
 
         var players = CreatePlayers();
-        var game = new PokerGame();
+        var game = new PokerGame(UI, ConsoleInput);
         
         JoinGame(players, game);
         game.StartGame();
@@ -77,27 +77,23 @@ public static class Program
 
         for (var playerCount = 0; playerCount < DefaultPlayerCount; playerCount++)
         {
-            Console.WriteLine($"\n--- 玩家 {playerCount + 1} ---");
-            Console.WriteLine("1. 人類玩家");
-            Console.WriteLine("2. AI 玩家");
-            Console.Write("請選擇玩家類型 (1-2): ");
+            UI.DisplayEmptyLine();
+            UI.DisplayLine($"--- Player {playerCount + 1} ---");
+            UI.DisplayLine("1. Human Player");
+            UI.DisplayLine("2. AI Player");
 
-            var typeChoice = Console.ReadLine();
+            var typeChoice = ConsoleInput.GetMenuChoice("Select player type (1-2): ", 1, 2);
 
             switch (typeChoice)
             {
-                case "1":
-                {
+                case 1:
                     players.Add(CreateHumanPlayer(playerCount));
                     break;
-                }
-                case "2":
-                {
+                case 2:
                     players.Add(CreateAiPlayer(playerCount));
                     break;
-                }
                 default:
-                    Console.WriteLine("無效的選擇，默認創建 AI 玩家。");
+                    UI.DisplayLine("Invalid choice, creating AI player by default.");
                     players.Add(new AiPlayer($"AI{playerCount + 1}"));
                     break;
             }
@@ -108,25 +104,13 @@ public static class Program
 
     private static AiPlayer CreateAiPlayer(int playerCount)
     {
-        Console.Write("請輸入 AI 名稱: ");
-        var name = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            name = $"AI{playerCount + 1}";
-        }
-
+        var name = ConsoleInput.GetPlayerName("Enter AI name: ", $"AI{playerCount + 1}");
         return new AiPlayer(name);
     }
 
     private static HumanPlayer CreateHumanPlayer(int playerCount)
     {
-        Console.Write("請輸入玩家姓名: ");
-        var name = Console.ReadLine();
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            name = $"玩家{playerCount + 1}";
-        }
-
+        var name = ConsoleInput.GetPlayerName("Enter player name: ", $"Player{playerCount + 1}");
         return new HumanPlayer(name);
     }
 }

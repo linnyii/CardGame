@@ -1,9 +1,10 @@
 using CardGame.Models;
 using CardGame.Players;
+using CardGame.Services;
 
 namespace CardGame.Games;
 
-public class PokerGame : Game
+public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, consoleInput)
 {
     private readonly PokerDeck _deck = new();
     private readonly Dictionary<Player, PokerHandCards> _playerHandCards = new();
@@ -13,24 +14,26 @@ public class PokerGame : Game
 
     public override void StartGame()
     {
-        Console.WriteLine("\n=== 撲克遊戲開始 ===");
-        Console.WriteLine($"總共進行 {TotalRounds} 輪遊戲\n");
+        UI.DisplayGameStart("Poker Game");
+        UI.DisplayLine($"Total of {TotalRounds} rounds will be played");
+        UI.DisplayEmptyLine();
         
         _deck.InitializeDeck();
         _deck.Shuffle();
         
-        Console.WriteLine("發牌中...\n");
+        UI.DisplayLine("Dealing cards...");
+        UI.DisplayEmptyLine();
 
         DealingCardsToPlayers();
         
-        Console.WriteLine("結束發牌\n");
+        UI.DisplayLine("Finished dealing cards");
+        UI.DisplayEmptyLine();
         
-        while (_currentRound < TotalRounds && !IsGameFinished)
+        while (_currentRound < TotalRounds)
         {
             _currentRound++;
-            Console.WriteLine($"\n========== 第 {_currentRound} 輪 ==========");
+            UI.DisplayRoundNumber(_currentRound);
             PlayRound();
-            
         }
 
         DisplayFinalResults();
@@ -54,7 +57,6 @@ public class PokerGame : Game
 
     public override void PlayRound()
     {
-
         var playedCardsPerRound = new Dictionary<Player, PokerCard>();
         
         foreach (var player in Players)
@@ -70,10 +72,9 @@ public class PokerGame : Game
         }
 
         var roundWinner = DetermineRoundWinner(playedCardsPerRound);
-        Console.WriteLine($"\n本回合贏家: {roundWinner.Name} 🎉");
+        UI.DisplayRoundWinner(roundWinner.Name);
         
         roundWinner.AddScore();
-        
     }
 
     private PokerCard GetAiPlayerChoice(Player player)
@@ -84,11 +85,12 @@ public class PokerGame : Game
     private PokerCard GetHumanPlayerChoice(Player player)
     {
         var handCard = _playerHandCards[player];
-        Console.WriteLine($"\n{player.Name}，請選擇要打出的牌:");
+        UI.DisplayEmptyLine();
+        UI.DisplayLine($"{player.Name}, please choose a card to play:");
         
-        handCard.DisplayEachCard();
+        handCard.DisplayEachCard(UI);
 
-        return handCard.ManualChooseACard();
+        return handCard.ManualChooseACard(ConsoleInput);
     }
 
     private static Player DetermineRoundWinner(Dictionary<Player, PokerCard> playedCards)
@@ -112,11 +114,12 @@ public class PokerGame : Game
 
     private void DisplayFinalResults()
     {
-        Console.WriteLine("遊戲結束！最終結果：");
+        UI.DisplayGameEnd();
         
         var winner = GetFinalWinner();
         
-        Console.WriteLine($"\n總冠軍: {winner.Name} (分數: {winner.Score}) \n");
+        UI.DisplayWinner(winner.Name, winner.Score);
+        UI.DisplayEmptyLine();
     }
 
     public override Player GetFinalWinner()

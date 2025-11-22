@@ -11,6 +11,5 @@ public class UnoCard(Color color, int number)
     {
         return Color == currentCard.Color || Number == currentCard.Number;
     }
-    
 }
 

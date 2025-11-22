@@ -1,9 +1,10 @@
 using CardGame.Models;
 using CardGame.Players;
+using CardGame.Services;
 
 namespace CardGame.Games;
 
-public class UnoGame : Game
+public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, consoleInput)
 {
     private readonly UnoDeck _deck = new();
     private readonly Dictionary<Player, UnoHandCards> _playerAndHandCards = new();
@@ -13,14 +14,15 @@ public class UnoGame : Game
 
     public override void StartGame()
     {
-        Console.WriteLine("\n=== Uno 遊戲開始 ===\n");
+        UI.DisplayGameStart("UNO Game");
         
         _deck.InitializeDeck();
         _deck.Shuffle();
         DealingCardToPlayers();
 
         _currentCard = _deck.DrawCard();
-        Console.WriteLine($"起始牌: {_currentCard}\n");
+        UI.DisplayLine($"Starting card: {_currentCard}");
+        UI.DisplayEmptyLine();
 
         while (!IsGameFinished)
         {
@@ -30,7 +32,7 @@ public class UnoGame : Game
         var winner = GetFinalWinner();
         if (winner != null)
         {
-            Console.WriteLine($"\n {winner.Name} 贏得了遊戲！");
+            UI.DisplayWinner(winner.Name);
         }
     }
 
@@ -53,11 +55,11 @@ public class UnoGame : Game
     public override void PlayRound()
     {
         var currentPlayer = GetCurrentPlayer();
-        Console.WriteLine($"\n--- {currentPlayer.Name} 的回合 ---");
-        Console.WriteLine($"當前牌: {_currentCard}");
+        UI.DisplayPlayerTurn(currentPlayer.Name);
+        UI.DisplayLine($"Current card: {_currentCard}");
         
         var handCards = _playerAndHandCards[currentPlayer];
-        Console.WriteLine($"手牌: {string.Join(", ", handCards)}");
+        UI.DisplayLine($"Hand cards: {string.Join(", ", handCards)}");
 
         var playableCards = handCards.GetPlayableHandCards(_currentCard).ToList();
 
@@ -80,7 +82,7 @@ public class UnoGame : Game
             }
             default:
             {
-                Console.WriteLine($"{currentPlayer.Name} 沒有可打的牌，抽一張牌");
+                UI.DisplayLine($"{currentPlayer.Name} has no playable cards, drawing a card...");
                 var drawnCard = _deck.DrawCard();
                 if (drawnCard == null)
                 {
@@ -91,14 +93,15 @@ public class UnoGame : Game
                 else
                 {
                     handCards.Cards.Add(drawnCard);
-                    Console.WriteLine($"抽到: {drawnCard}, 並加入手牌");
                 }
+
+                UI.DisplayLine($"Drew: {drawnCard}, added to hand");
 
                 break;
             }
         }
         
-            MoveToNextPlayer();
+        MoveToNextPlayer();
     }
 
     private bool IsWinnerComingOut(UnoHandCards handCards)
@@ -109,31 +112,24 @@ public class UnoGame : Game
 
     }
 
-    private static UnoCard GetAiPlayerChoice(List<UnoCard> playableCards, Player currentPlayer)
+    private UnoCard GetAiPlayerChoice(List<UnoCard> playableCards, Player currentPlayer)
     {
-        var cardToPlay = playableCards[new Random().Next(playableCards.Count)];
-        Console.WriteLine($"{currentPlayer.Name} 打出: {cardToPlay}");
+        var cardToPlay = playableCards[Random.Shared.Next(playableCards.Count)];
+        UI.DisplayLine($"{currentPlayer.Name} plays: {cardToPlay}");
         return cardToPlay;
     }
 
-    private static UnoCard GetHumanPlayerChoice(List<UnoCard> playableCards)
+    private UnoCard GetHumanPlayerChoice(List<UnoCard> playableCards)
     {
-        Console.WriteLine("\n可以打出的牌:");
+        UI.DisplayEmptyLine();
+        UI.DisplayLine("Playable cards:");
         for (var i = 0; i < playableCards.Count; i++)
         {
-            Console.WriteLine($"{i + 1}. {playableCards[i]}");
+            UI.DisplayLine($"{i + 1}. {playableCards[i]}");
         }
 
-        while (true)
-        {
-            Console.Write("請選擇要打出的牌 (輸入編號): ");
-            if (int.TryParse(Console.ReadLine(), out int choice) && 
-                choice >= 1 && choice <= playableCards.Count)
-            {
-                return playableCards[choice - 1];
-            }
-            Console.WriteLine("無效的選擇，請重新輸入。");
-        }
+        var choice = ConsoleInput.GetCardChoice("Select a card to play (enter number): ", playableCards.Count);
+        return playableCards[choice - 1];
     }
 
     private void MoveToNextPlayer()
