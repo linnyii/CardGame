@@ -1,27 +1,12 @@
-﻿using CardGame.Services;
+﻿namespace CardGame.Models;
 
-namespace CardGame.Models;
-
-public class PokerHandCards
+public class PokerHandCards : IHandCards
 {
     private static readonly Random SharedRandom = new();
     public List<PokerCard> Cards { get; } = [];
-
-    public void DisplayEachCard(IConsoleGameUi ui)
-    {
-        var cardIndex = 1;
-        foreach (var card in Cards)
-        {
-            ui.DisplayLine($"{cardIndex}. {card.Rank} of {card.Suit}");
-            cardIndex++;
-        }
-    }
-
-    public PokerCard ManualChooseACard(IConsoleInput consoleInput)
-    {
-        var choice = consoleInput.GetCardChoice("Please select a card (enter number): ", Cards.Count);
-        return Cards[choice - 1];
-    }
+    
+    public int Count => Cards.Count;
+    public bool HasCards() => Cards.Count > 0;
 
     public PokerCard RandomChooseCard()
     {

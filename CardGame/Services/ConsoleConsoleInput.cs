@@ -26,7 +26,7 @@ public class ConsoleConsoleInput(IConsoleGameUi ui) : IConsoleInput
         while (true)
         {
             ui.DisplayMessage(prompt);
-            if (int.TryParse(Console.ReadLine(), out int choice) && 
+            if (int.TryParse(Console.ReadLine(), out var choice) && 
                 choice >= 1 && choice <= totalCards)
             {
                 return choice;

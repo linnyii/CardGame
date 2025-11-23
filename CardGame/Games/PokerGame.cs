@@ -7,7 +7,6 @@ namespace CardGame.Games;
 public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, consoleInput)
 {
     private readonly PokerDeck _deck = new();
-    private readonly Dictionary<Player, PokerHandCards> _playerHandCards = new();
     private const int TotalRounds = 13;
     private int _currentRound;
     private const int HandCardNumberPerPlayer = 13;
@@ -43,14 +42,15 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui,
     {
         foreach (var player in Players)
         {
-            _playerHandCards[player] = new PokerHandCards();
+            player.SetHandCards(new PokerHandCards());
         }
         
         for (var handCardIndex = 0; handCardIndex < HandCardNumberPerPlayer; handCardIndex++)
         {
             foreach (var player in Players)
             {
-                _playerHandCards[player].Cards.Add(_deck.DrawCard()!);
+                var handCards = player.GetHandCards<PokerHandCards>();
+                handCards.Cards.Add(_deck.DrawCard()!);
             }
         }
     }
@@ -61,14 +61,16 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui,
         
         foreach (var player in Players)
         {
+            var handCards = player.GetHandCards<PokerHandCards>();
+            
             var cardToPlay = player switch
             {
-                HumanPlayer => GetHumanPlayerChoice(player),
-                _ => GetAiPlayerChoice(player)
+                HumanPlayer => GetHumanPlayerChoice(player, handCards),
+                _ => GetAiPlayerChoice(handCards)
             };
 
             playedCardsPerRound[player] = cardToPlay;
-            _playerHandCards[player].Cards.Remove(cardToPlay);
+            handCards.Cards.Remove(cardToPlay);
         }
 
         var roundWinner = DetermineRoundWinner(playedCardsPerRound);
@@ -77,20 +79,20 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui,
         roundWinner.AddScore();
     }
 
-    private PokerCard GetAiPlayerChoice(Player player)
+    private PokerCard GetAiPlayerChoice(PokerHandCards handCards)
     {
-        return _playerHandCards[player].RandomChooseCard();
+        return handCards.RandomChooseCard();
     }
 
-    private PokerCard GetHumanPlayerChoice(Player player)
+    private PokerCard GetHumanPlayerChoice(Player player, PokerHandCards handCards)
     {
-        var handCard = _playerHandCards[player];
         UI.DisplayEmptyLine();
         UI.DisplayLine($"{player.Name}, please choose a card to play:");
+        UI.DisplayPokerHandCards(handCards);
         
-        handCard.DisplayEachCard(UI);
-
-        return handCard.ManualChooseACard(ConsoleInput);
+        var choice = ConsoleInput.GetCardChoice("Please select a card (enter number): ", handCards.Count);
+        
+        return handCards.Cards[choice - 1];
     }
 
     private static Player DetermineRoundWinner(Dictionary<Player, PokerCard> playedCards)

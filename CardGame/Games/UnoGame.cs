@@ -7,9 +7,8 @@ namespace CardGame.Games;
 public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, consoleInput)
 {
     private readonly UnoDeck _deck = new();
-    private readonly Dictionary<Player, UnoHandCards> _playerAndHandCards = new();
     private UnoCard? _currentCard;
-    private const int HandCardNumberPerPlayer = 5;
+    private const int TotalHandCardPerPlayer = 5;
     private int CurrentPlayerIndex { get; set; }
 
     public override void StartGame()
@@ -40,15 +39,16 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, c
     {
         foreach (var player in Players)
         {
-            _playerAndHandCards[player] = new UnoHandCards();
-            for (var i = 0; i < HandCardNumberPerPlayer; i++)
+            var handCards = new UnoHandCards();
+            for (var i = 0; i < TotalHandCardPerPlayer; i++)
             {
                 var card = _deck.DrawCard();
                 if (card != null)
                 {
-                    _playerAndHandCards[player].Cards.Add(card);
+                    handCards.AddHandCard(card);
                 }
             }
+            player.SetHandCards(handCards);
         }
     }
 
@@ -58,9 +58,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, c
         UI.DisplayPlayerTurn(currentPlayer.Name);
         UI.DisplayLine($"Current card: {_currentCard}");
         
-        var handCards = _playerAndHandCards[currentPlayer];
-        UI.DisplayLine($"Hand cards: {string.Join(", ", handCards)}");
-
+        var handCards = currentPlayer.GetHandCards<UnoHandCards>();
         var playableCards = handCards.GetPlayableHandCards(_currentCard).ToList();
 
         switch (playableCards.Count)
@@ -77,8 +75,8 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, c
                 _currentCard = cardToPlay;
                 _deck.AddIntoDiscardedCards(cardToPlay);
 
-                if (IsWinnerComingOut(handCards)) return;
-                break;
+                if (!IsWinnerComingOut(currentPlayer)) break;
+                return;
             }
             default:
             {
@@ -104,12 +102,11 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, c
         MoveToNextPlayer();
     }
 
-    private bool IsWinnerComingOut(UnoHandCards handCards)
+    private bool IsWinnerComingOut(Player player)
     {
-        if (handCards.Cards.Count != 0) return false;
+        if (player.HasCards()) return false;
         IsGameFinished = true;
         return true;
-
     }
 
     private UnoCard GetAiPlayerChoice(List<UnoCard> playableCards, Player currentPlayer)
@@ -139,7 +136,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, c
 
     public override Player? GetFinalWinner()
     {
-        return Players.FirstOrDefault(player => _playerAndHandCards[player].Cards.Count == 0);
+        return Players.FirstOrDefault(player => !player.HasCards());
     }
 
     private Player GetCurrentPlayer()

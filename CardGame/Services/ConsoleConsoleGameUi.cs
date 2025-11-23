@@ -1,3 +1,5 @@
+using CardGame.Models;
+
 namespace CardGame.Services;
 
 public class ConsoleConsoleGameUi : IConsoleGameUi
@@ -77,6 +79,16 @@ public class ConsoleConsoleGameUi : IConsoleGameUi
     public void DisplayRoundWinner(string playerName)
     {
         Console.WriteLine($"\nRound Winner: {playerName} 🎉");
+    }
+
+    public void DisplayPokerHandCards(PokerHandCards pokerHandCards)
+    {
+        var cardIndex = 1;
+        foreach (var card in pokerHandCards.Cards)
+        {
+            Console.WriteLine($"{cardIndex}. {card.Rank} of {card.Suit}");
+            cardIndex++;
+        }
     }
 }
 
