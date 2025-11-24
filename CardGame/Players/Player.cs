@@ -24,7 +24,5 @@ public abstract class Player(string name)
     }
     
     public bool HasCards() => _handCards?.HasCards() ?? false;
-    
-    public int GetCardCount() => _handCards?.Count ?? 0;
 }
 

@@ -4,7 +4,8 @@ using CardGame.Services;
 
 namespace CardGame.Games;
 
-public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, consoleInput)
+public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player> players) 
+    : Game(ui, consoleInput, players)
 {
     private readonly UnoDeck _deck = new();
     private UnoCard? _currentCard;
@@ -29,10 +30,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, c
         }
 
         var winner = GetFinalWinner();
-        if (winner != null)
-        {
-            UI.DisplayWinner(winner.Name);
-        }
+        UI.DisplayWinner(winner!.Name);
     }
 
     private void DealingCardToPlayers()
@@ -40,7 +38,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, c
         foreach (var player in Players)
         {
             var handCards = new UnoHandCards();
-            for (var i = 0; i < TotalHandCardPerPlayer; i++)
+            for (var count = 0; count < TotalHandCardPerPlayer; count++)
             {
                 var card = _deck.DrawCard();
                 if (card != null)

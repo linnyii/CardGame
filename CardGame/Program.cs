@@ -7,6 +7,9 @@ namespace CardGame;
 public static class Program
 {
     private const int DefaultPlayerCount = 4;
+    private const int UnoGame = 1;
+    private const int PokerGame = 2;
+    private const int Exit = 3;
     private static readonly IConsoleGameUi UI = new ConsoleConsoleGameUi();
     private static readonly IConsoleInput ConsoleInput = new ConsoleConsoleInput(UI);
 
@@ -28,13 +31,13 @@ public static class Program
 
             switch (choice)
             {
-                case 1:
+                case UnoGame:
                     PlayUnoGame();
                     break;
-                case 2:
+                case PokerGame:
                     PlayPokerGame();
                     break;
-                case 3:
+                case Exit:
                     UI.DisplayLine("\nThank you for playing! Goodbye!");
                     return;
             }
@@ -46,18 +49,9 @@ public static class Program
         UI.DisplaySection("Creating UNO Game");
         
         var players = CreatePlayers();
-        var game = new UnoGame(UI, ConsoleInput);
+        var game = new UnoGame(UI, ConsoleInput, players);
         
-        JoinGame(players, game);
         game.StartGame();
-    }
-
-    private static void JoinGame(List<Player> players, Game game)
-    {
-        foreach (var player in players)
-        {
-            game.AddPlayer(player);
-        }
     }
 
     private static void PlayPokerGame()
@@ -65,9 +59,8 @@ public static class Program
         UI.DisplaySection("Creating Poker Game");
 
         var players = CreatePlayers();
-        var game = new PokerGame(UI, ConsoleInput);
+        var game = new PokerGame(UI, ConsoleInput, players);
         
-        JoinGame(players, game);
         game.StartGame();
     }
 

@@ -4,29 +4,27 @@ using CardGame.Services;
 
 namespace CardGame.Games;
 
-public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui, consoleInput)
+public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player> players) 
+    : Game(ui, consoleInput, players)
 {
     private readonly PokerDeck _deck = new();
     private const int TotalRounds = 13;
     private int _currentRound;
-    private const int HandCardNumberPerPlayer = 13;
+    private const int TotalHandCardsPerPlayer = 13;
 
     public override void StartGame()
     {
         UI.DisplayGameStart("Poker Game");
         UI.DisplayLine($"Total of {TotalRounds} rounds will be played");
-        UI.DisplayEmptyLine();
         
         _deck.InitializeDeck();
         _deck.Shuffle();
         
         UI.DisplayLine("Dealing cards...");
-        UI.DisplayEmptyLine();
 
         DealingCardsToPlayers();
         
         UI.DisplayLine("Finished dealing cards");
-        UI.DisplayEmptyLine();
         
         while (_currentRound < TotalRounds)
         {
@@ -45,7 +43,7 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui,
             player.SetHandCards(new PokerHandCards());
         }
         
-        for (var handCardIndex = 0; handCardIndex < HandCardNumberPerPlayer; handCardIndex++)
+        for (var handCardIndex = 0; handCardIndex < TotalHandCardsPerPlayer; handCardIndex++)
         {
             foreach (var player in Players)
             {
@@ -86,7 +84,6 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput) : Game(ui,
 
     private PokerCard GetHumanPlayerChoice(Player player, PokerHandCards handCards)
     {
-        UI.DisplayEmptyLine();
         UI.DisplayLine($"{player.Name}, please choose a card to play:");
         UI.DisplayPokerHandCards(handCards);
         

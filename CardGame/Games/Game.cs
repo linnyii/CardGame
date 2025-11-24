@@ -3,17 +3,12 @@ using CardGame.Services;
 
 namespace CardGame.Games;
 
-public abstract class Game(IConsoleGameUi ui, IConsoleInput consoleInput)
+public abstract class Game(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player> players)
 {
-    protected List<Player> Players { get; } = [];
+    protected List<Player> Players { get; } = players;
     protected bool IsGameFinished { get; set; }
     protected IConsoleGameUi UI { get; } = ui;
     protected IConsoleInput ConsoleInput { get; } = consoleInput;
-
-    public void AddPlayer(Player player)
-    {
-        Players.Add(player);
-    }
 
     public abstract void StartGame();
     
