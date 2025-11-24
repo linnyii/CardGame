@@ -2,17 +2,12 @@ namespace CardGame.Services;
 
 public class ConsoleConsoleInput(IConsoleGameUi ui) : IConsoleInput
 {
-    public string? ReadLine()
-    {
-        return Console.ReadLine();
-    }
-
     public int GetMenuChoice(string prompt, int minValue, int maxValue)
     {
         while (true)
         {
             ui.DisplayMessage(prompt);
-            if (int.TryParse(Console.ReadLine(), out int choice) && 
+            if (int.TryParse(Console.ReadLine(), out var choice) && 
                 choice >= minValue && choice <= maxValue)
             {
                 return choice;

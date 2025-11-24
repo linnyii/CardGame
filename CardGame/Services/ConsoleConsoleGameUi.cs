@@ -19,13 +19,6 @@ public class ConsoleConsoleGameUi : IConsoleGameUi
         Console.WriteLine();
     }
 
-    public void DisplayHeader(string header)
-    {
-        Console.WriteLine($"\n╔{'═'.ToString().PadRight(header.Length + 2, '═')}╗");
-        Console.WriteLine($"║ {header} ║");
-        Console.WriteLine($"╚{'═'.ToString().PadRight(header.Length + 2, '═')}╝");
-    }
-
     public void DisplaySection(string section)
     {
         Console.WriteLine($"\n=== {section} ===");
@@ -40,24 +33,11 @@ public class ConsoleConsoleGameUi : IConsoleGameUi
     {
         if (score > 0)
         {
-            Console.WriteLine($"\n🏆 Winner: {playerName} (Score: {score})");
+            Console.WriteLine($"\nWinner: {playerName} (Score: {score})");
         }
         else
         {
-            Console.WriteLine($"\n🏆 {playerName} wins the game!");
-        }
-    }
-
-    public void DisplayCard(string cardInfo)
-    {
-        Console.WriteLine(cardInfo);
-    }
-
-    public void DisplayCards(IEnumerable<string> cards)
-    {
-        foreach (var card in cards)
-        {
-            Console.WriteLine(card);
+            Console.WriteLine($"\n{playerName} wins the game!");
         }
     }
 
@@ -78,7 +58,7 @@ public class ConsoleConsoleGameUi : IConsoleGameUi
 
     public void DisplayRoundWinner(string playerName)
     {
-        Console.WriteLine($"\nRound Winner: {playerName} 🎉");
+        Console.WriteLine($"\nRound Winner: {playerName}");
     }
 
     public void DisplayPokerHandCards(PokerHandCards pokerHandCards)
