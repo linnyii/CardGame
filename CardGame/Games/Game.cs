@@ -13,29 +13,20 @@ public abstract class Game<TCard>(IConsoleGameUi ui, IConsoleInput consoleInput,
     public void StartGame()
     {
         DisplayGameStartMessage();
-        
         InitializeGame();
-        
         PreActionBeforePlayRounds();
-        
         RunGameLoop();
-        
         DisplayFinalResults();
     }
     
     protected abstract void DisplayGameStartMessage();
-    
     protected abstract void InitializeDeck();
-    
     protected abstract void ShuffleDeck();
-    
     protected abstract void DealCardsToPlayers();
-    
     protected abstract void RunGameLoop();
-    
     public abstract void PlayRound();
-
     protected abstract Player<TCard>? GetFinalWinner();
+    
     private void InitializeGame()
     {
         InitializeDeck();
