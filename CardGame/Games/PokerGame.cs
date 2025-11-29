@@ -12,31 +12,24 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
     private int _currentRound;
     private const int TotalHandCardsPerPlayer = 13;
 
-    public override void StartGame()
+    
+    protected override void DisplayGameStartMessage()
     {
         UI.DisplayGameStart("Poker Game");
         UI.DisplayLine($"Total of {TotalRounds} rounds will be played");
-        
-        _deck.InitializeDeck();
-        _deck.Shuffle();
-        
-        UI.DisplayLine("Dealing cards...");
-
-        DealingCardsToPlayers();
-        
-        UI.DisplayLine("Finished dealing cards");
-        
-        while (_currentRound < TotalRounds)
-        {
-            _currentRound++;
-            UI.DisplayRoundNumber(_currentRound);
-            PlayRound();
-        }
-
-        DisplayFinalResults();
     }
 
-    private void DealingCardsToPlayers()
+    protected override void InitializeDeck()
+    {
+        _deck.InitializeDeck();
+    }
+
+    protected override void ShuffleDeck()
+    {
+        _deck.Shuffle();
+    }
+
+    protected override void DealCardsToPlayers()
     {
         for (var handCardIndex = 0; handCardIndex < TotalHandCardsPerPlayer; handCardIndex++)
         {
@@ -44,6 +37,16 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
             {
                 player.Cards.Add(_deck.DrawCard()!);
             }
+        }
+    }
+
+    protected override void RunGameLoop()
+    {
+        while (_currentRound < TotalRounds)
+        {
+            _currentRound++;
+            UI.DisplayRoundNumber(_currentRound);
+            PlayRound();
         }
     }
 
@@ -103,19 +106,8 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         return playerCardPair.Value.CompareTo(highestCard) > 0;
     }
 
-    private void DisplayFinalResults()
+    protected override Player<PokerCard> GetFinalWinner()
     {
-        UI.DisplayGameEnd();
-        
-        var winner = GetFinalWinner();
-        
-        UI.DisplayWinner(winner.Name, winner.Score);
-        UI.DisplayEmptyLine();
-    }
-
-    public override Player<PokerCard> GetFinalWinner()
-    {
-        
         var winner = Players[0];
         foreach (var player in Players.Where(player => player.Score > winner.Score))
         {

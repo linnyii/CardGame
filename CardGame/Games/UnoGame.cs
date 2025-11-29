@@ -12,28 +12,23 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
     private const int TotalHandCardPerPlayer = 5;
     private int CurrentPlayerIndex { get; set; }
 
-    public override void StartGame()
+    
+    protected override void DisplayGameStartMessage()
     {
         UI.DisplayGameStart("UNO Game");
-        
-        _deck.InitializeDeck();
-        _deck.Shuffle();
-        DealingCardToPlayers();
-
-        _currentCard = _deck.DrawCard();
-        UI.DisplayLine($"Starting card: {_currentCard}");
-        UI.DisplayEmptyLine();
-
-        while (!IsGameFinished)
-        {
-            PlayRound();
-        }
-
-        var winner = GetFinalWinner();
-        UI.DisplayWinner(winner!.Name);
     }
 
-    private void DealingCardToPlayers()
+    protected override void InitializeDeck()
+    {
+        _deck.InitializeDeck();
+    }
+
+    protected override void ShuffleDeck()
+    {
+        _deck.Shuffle();
+    }
+
+    protected override void DealCardsToPlayers()
     {
         foreach (var player in Players)
         {
@@ -45,6 +40,30 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
                     player.Cards.Add(card);
                 }
             }
+        }
+    }
+
+    protected override void PreActionBeforePlayRounds()
+    {
+        _currentCard = _deck.DrawCard();
+        UI.DisplayLine($"Starting card: {_currentCard}");
+        UI.DisplayEmptyLine();
+    }
+
+    protected override void RunGameLoop()
+    {
+        while (!IsGameFinished)
+        {
+            PlayRound();
+        }
+    }
+
+    protected override void DisplayFinalResults()
+    {
+        var winner = GetFinalWinner();
+        if (winner != null)
+        {
+            UI.DisplayWinner(winner.Name);
         }
     }
 
@@ -131,7 +150,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
         CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
     }
 
-    public override Player<UnoCard>? GetFinalWinner()
+    protected override Player<UnoCard>? GetFinalWinner()
     {
         return Players.FirstOrDefault(player => !player.HasCards());
     }
