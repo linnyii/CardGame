@@ -1,4 +1,4 @@
 namespace CardGame.Players;
 
-public class AiPlayer(string name) : Player(name);
+public class AiPlayer<TCard>(string name) : Player<TCard>(name);
 

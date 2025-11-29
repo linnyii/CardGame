@@ -1,4 +1,5 @@
 ﻿using CardGame.Games;
+using CardGame.Models;
 using CardGame.Players;
 using CardGame.Services;
 
@@ -48,7 +49,7 @@ public static class Program
     {
         UI.DisplaySection("Creating UNO Game");
         
-        var players = CreatePlayers();
+        var players = CreatePlayers<UnoCard>();
         var game = new UnoGame(UI, ConsoleInput, players);
         
         game.StartGame();
@@ -58,15 +59,15 @@ public static class Program
     {
         UI.DisplaySection("Creating Poker Game");
 
-        var players = CreatePlayers();
+        var players = CreatePlayers<PokerCard>();
         var game = new PokerGame(UI, ConsoleInput, players);
         
         game.StartGame();
     }
 
-    private static List<Player> CreatePlayers()
+    private static List<Player<TCard>> CreatePlayers<TCard>()
     {
-        var players = new List<Player>();
+        var players = new List<Player<TCard>>();
 
         for (var playerCount = 0; playerCount < DefaultPlayerCount; playerCount++)
         {
@@ -80,14 +81,14 @@ public static class Program
             switch (typeChoice)
             {
                 case 1:
-                    players.Add(CreateHumanPlayer(playerCount));
+                    players.Add(CreateHumanPlayer<TCard>(playerCount));
                     break;
                 case 2:
-                    players.Add(CreateAiPlayer(playerCount));
+                    players.Add(CreateAiPlayer<TCard>(playerCount));
                     break;
                 default:
                     UI.DisplayLine("Invalid choice, creating AI player by default.");
-                    players.Add(new AiPlayer($"AI{playerCount + 1}"));
+                    players.Add(new AiPlayer<TCard>($"AI{playerCount + 1}"));
                     break;
             }
         }
@@ -95,15 +96,15 @@ public static class Program
         return players;
     }
 
-    private static AiPlayer CreateAiPlayer(int playerCount)
+    private static AiPlayer<TCard> CreateAiPlayer<TCard>(int playerCount)
     {
         var name = ConsoleInput.GetPlayerName("Enter AI name: ", $"AI{playerCount + 1}");
-        return new AiPlayer(name);
+        return new AiPlayer<TCard>(name);
     }
 
-    private static HumanPlayer CreateHumanPlayer(int playerCount)
+    private static HumanPlayer<TCard> CreateHumanPlayer<TCard>(int playerCount)
     {
         var name = ConsoleInput.GetPlayerName("Enter player name: ", $"Player{playerCount + 1}");
-        return new HumanPlayer(name);
+        return new HumanPlayer<TCard>(name);
     }
 }

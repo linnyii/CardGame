@@ -4,8 +4,8 @@ using CardGame.Services;
 
 namespace CardGame.Games;
 
-public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player> players) 
-    : Game(ui, consoleInput, players)
+public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<PokerCard>> players) 
+    : Game<PokerCard>(ui, consoleInput, players)
 {
     private readonly PokerDeck _deck = new();
     private const int TotalRounds = 13;
@@ -38,37 +38,29 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
 
     private void DealingCardsToPlayers()
     {
-        foreach (var player in Players)
-        {
-            player.SetHandCards(new PokerHandCards());
-        }
-        
         for (var handCardIndex = 0; handCardIndex < TotalHandCardsPerPlayer; handCardIndex++)
         {
             foreach (var player in Players)
             {
-                var handCards = player.GetHandCards<PokerHandCards>();
-                handCards.Cards.Add(_deck.DrawCard()!);
+                player.Cards.Add(_deck.DrawCard()!);
             }
         }
     }
 
     public override void PlayRound()
     {
-        var playedCardsPerRound = new Dictionary<Player, PokerCard>();
+        var playedCardsPerRound = new Dictionary<Player<PokerCard>, PokerCard>();
         
         foreach (var player in Players)
         {
-            var handCards = player.GetHandCards<PokerHandCards>();
-            
             var cardToPlay = player switch
             {
-                HumanPlayer => GetHumanPlayerChoice(player, handCards),
-                _ => GetAiPlayerChoice(handCards)
+                HumanPlayer<PokerCard> => GetHumanPlayerChoice(player),
+                _ => GetAiPlayerChoice(player)
             };
 
             playedCardsPerRound[player] = cardToPlay;
-            handCards.Cards.Remove(cardToPlay);
+            player.Cards.Remove(cardToPlay);
         }
 
         var roundWinner = DetermineRoundWinner(playedCardsPerRound);
@@ -77,24 +69,24 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         roundWinner.AddScore();
     }
 
-    private PokerCard GetAiPlayerChoice(PokerHandCards handCards)
+    private PokerCard GetAiPlayerChoice(Player<PokerCard> player)
     {
-        return handCards.RandomChooseCard();
+        return player.Cards[Random.Shared.Next(player.Cards.Count)];
     }
 
-    private PokerCard GetHumanPlayerChoice(Player player, PokerHandCards handCards)
+    private PokerCard GetHumanPlayerChoice(Player<PokerCard> player)
     {
         UI.DisplayLine($"{player.Name}, please choose a card to play:");
-        UI.DisplayPokerHandCards(handCards);
+        UI.DisplayPokerHandCards(player.Cards);
         
-        var choice = ConsoleInput.GetCardChoice("Please select a card (enter number): ", handCards.Count);
+        var choice = ConsoleInput.GetCardChoice("Please select a card (enter number): ", player.CardCount);
         
-        return handCards.Cards[choice - 1];
+        return player.Cards[choice - 1];
     }
 
-    private static Player DetermineRoundWinner(Dictionary<Player, PokerCard> playedCards)
+    private static Player<PokerCard> DetermineRoundWinner(Dictionary<Player<PokerCard>, PokerCard> playedCards)
     {
-        Player? winner = null;
+        Player<PokerCard>? winner = null;
         PokerCard? highestCard = null;
 
         foreach (var cardPair in playedCards.Where(cardPair => highestCard == null || IsBiggerThanCurrentHighestCard(cardPair, highestCard)))
@@ -106,7 +98,7 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         return winner!;
     }
 
-    private static bool IsBiggerThanCurrentHighestCard(KeyValuePair<Player, PokerCard> playerCardPair, PokerCard highestCard)
+    private static bool IsBiggerThanCurrentHighestCard(KeyValuePair<Player<PokerCard>, PokerCard> playerCardPair, PokerCard highestCard)
     {
         return playerCardPair.Value.CompareTo(highestCard) > 0;
     }
@@ -121,7 +113,7 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         UI.DisplayEmptyLine();
     }
 
-    public override Player GetFinalWinner()
+    public override Player<PokerCard> GetFinalWinner()
     {
         
         var winner = Players[0];

@@ -4,8 +4,8 @@ using CardGame.Services;
 
 namespace CardGame.Games;
 
-public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player> players) 
-    : Game(ui, consoleInput, players)
+public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<UnoCard>> players) 
+    : Game<UnoCard>(ui, consoleInput, players)
 {
     private readonly UnoDeck _deck = new();
     private UnoCard? _currentCard;
@@ -37,16 +37,14 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player>
     {
         foreach (var player in Players)
         {
-            var handCards = new UnoHandCards();
             for (var count = 0; count < TotalHandCardPerPlayer; count++)
             {
                 var card = _deck.DrawCard();
                 if (card != null)
                 {
-                    handCards.AddHandCard(card);
+                    player.Cards.Add(card);
                 }
             }
-            player.SetHandCards(handCards);
         }
     }
 
@@ -56,8 +54,9 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player>
         UI.DisplayPlayerTurn(currentPlayer.Name);
         UI.DisplayLine($"Current card: {_currentCard}");
         
-        var handCards = currentPlayer.GetHandCards<UnoHandCards>();
-        var playableCards = handCards.GetPlayableHandCards(_currentCard).ToList();
+        var playableCards = currentPlayer.Cards
+            .Where(card => card.CanPlay(_currentCard!))
+            .ToList();
 
         switch (playableCards.Count)
         {
@@ -65,11 +64,11 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player>
             {
                 var cardToPlay = currentPlayer switch
                 {
-                    HumanPlayer => GetHumanPlayerChoice(playableCards),
+                    HumanPlayer<UnoCard> => GetHumanPlayerChoice(playableCards),
                     _ => GetAiPlayerChoice(playableCards, currentPlayer)
                 };
 
-                handCards.Cards.Remove(cardToPlay);
+                currentPlayer.Cards.Remove(cardToPlay);
                 _currentCard = cardToPlay;
                 _deck.AddIntoDiscardedCards(cardToPlay);
 
@@ -84,11 +83,11 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player>
                 {
                     _deck.RemoveFromDisCardedCard(_currentCard!);
                     _deck.RePile();
-                    handCards.Cards.Add(_deck.DrawCard()!);
+                    currentPlayer.Cards.Add(_deck.DrawCard()!);
                 }
                 else
                 {
-                    handCards.Cards.Add(drawnCard);
+                    currentPlayer.Cards.Add(drawnCard);
                 }
 
                 UI.DisplayLine($"Drew: {drawnCard}, added to hand");
@@ -100,14 +99,14 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player>
         MoveToNextPlayer();
     }
 
-    private bool IsWinnerComingOut(Player player)
+    private bool IsWinnerComingOut(Player<UnoCard> player)
     {
         if (player.HasCards()) return false;
         IsGameFinished = true;
         return true;
     }
 
-    private UnoCard GetAiPlayerChoice(List<UnoCard> playableCards, Player currentPlayer)
+    private UnoCard GetAiPlayerChoice(List<UnoCard> playableCards, Player<UnoCard> currentPlayer)
     {
         var cardToPlay = playableCards[Random.Shared.Next(playableCards.Count)];
         UI.DisplayLine($"{currentPlayer.Name} plays: {cardToPlay}");
@@ -132,12 +131,12 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player>
         CurrentPlayerIndex = (CurrentPlayerIndex + 1) % Players.Count;
     }
 
-    public override Player? GetFinalWinner()
+    public override Player<UnoCard>? GetFinalWinner()
     {
         return Players.FirstOrDefault(player => !player.HasCards());
     }
 
-    private Player GetCurrentPlayer()
+    private Player<UnoCard> GetCurrentPlayer()
     {
         return Players[CurrentPlayerIndex];
     }

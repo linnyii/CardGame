@@ -1,6 +1,6 @@
 namespace CardGame.Players;
 
-public class HumanPlayer(string name) : Player(name)
+public class HumanPlayer<TCard>(string name) : Player<TCard>(name)
 {
 }
 

@@ -14,6 +14,6 @@ public interface IConsoleGameUi
     void DisplayGameEnd();
     void DisplayRoundNumber(int roundNumber);
     void DisplayRoundWinner(string playerName);
-    void DisplayPokerHandCards(PokerHandCards pokerHandCards);
+    void DisplayPokerHandCards(List<PokerCard> cards);
 }
 

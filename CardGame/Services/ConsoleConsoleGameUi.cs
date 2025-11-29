@@ -61,10 +61,10 @@ public class ConsoleConsoleGameUi : IConsoleGameUi
         Console.WriteLine($"\nRound Winner: {playerName}");
     }
 
-    public void DisplayPokerHandCards(PokerHandCards pokerHandCards)
+    public void DisplayPokerHandCards(List<PokerCard> cards)
     {
         var cardIndex = 1;
-        foreach (var card in pokerHandCards.Cards)
+        foreach (var card in cards)
         {
             Console.WriteLine($"{cardIndex}. {card.Rank} of {card.Suit}");
             cardIndex++;
