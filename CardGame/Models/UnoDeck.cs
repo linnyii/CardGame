@@ -24,9 +24,9 @@ public class UnoDeck : Deck<UnoCard>
     {
         foreach (var color in Enum.GetValues<Color>())
         {
-            for (var number = 0; number <= 9; number++)
+            foreach (var value in Enum.GetValues<UnoCardValue>())
             {
-                Cards.Add(new UnoCard(color, number));
+                Cards.Add(new UnoCard(color, value));
             }
         }
     }
