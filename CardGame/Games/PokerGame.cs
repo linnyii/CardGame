@@ -35,7 +35,7 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         {
             foreach (var player in Players)
             {
-                player.Cards.Add(_deck.DrawCard()!);
+                player.ReceiveCard(_deck.DrawCard()!);
             }
         }
     }

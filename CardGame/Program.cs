@@ -59,13 +59,13 @@ public static class Program
     {
         UI.DisplaySection("Creating Poker Game");
 
-        var players = CreatePlayers<PokerCard>();
+        var players = CreatePlayers<PokerCard>(maxCards: 13);
         var game = new PokerGame(UI, ConsoleInput, players);
         
         game.StartGame();
     }
 
-    private static List<Player<TCard>> CreatePlayers<TCard>()
+    private static List<Player<TCard>> CreatePlayers<TCard>(int? maxCards = null)
     {
         var players = new List<Player<TCard>>();
 
@@ -81,14 +81,14 @@ public static class Program
             switch (typeChoice)
             {
                 case 1:
-                    players.Add(CreateHumanPlayer<TCard>(playerCount));
+                    players.Add(CreateHumanPlayer<TCard>(playerCount, maxCards));
                     break;
                 case 2:
-                    players.Add(CreateAiPlayer<TCard>(playerCount));
+                    players.Add(CreateAiPlayer<TCard>(playerCount, maxCards));
                     break;
                 default:
                     UI.DisplayLine("Invalid choice, creating AI player by default.");
-                    players.Add(new AiPlayer<TCard>($"AI{playerCount + 1}"));
+                    players.Add(new AiPlayer<TCard>($"AI{playerCount + 1}", maxCards));
                     break;
             }
         }
@@ -96,15 +96,15 @@ public static class Program
         return players;
     }
 
-    private static AiPlayer<TCard> CreateAiPlayer<TCard>(int playerCount)
+    private static AiPlayer<TCard> CreateAiPlayer<TCard>(int playerCount, int? maxCards = null)
     {
         var name = ConsoleInput.GetPlayerName("Enter AI name: ", $"AI{playerCount + 1}");
-        return new AiPlayer<TCard>(name);
+        return new AiPlayer<TCard>(name, maxCards);
     }
 
-    private static HumanPlayer<TCard> CreateHumanPlayer<TCard>(int playerCount)
+    private static HumanPlayer<TCard> CreateHumanPlayer<TCard>(int playerCount, int? maxCards = null)
     {
         var name = ConsoleInput.GetPlayerName("Enter player name: ", $"Player{playerCount + 1}");
-        return new HumanPlayer<TCard>(name);
+        return new HumanPlayer<TCard>(name, maxCards);
     }
 }
