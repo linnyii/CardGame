@@ -7,3 +7,6 @@ public interface IConsoleInput
     string GetPlayerName(string prompt, string defaultName);
 }
 
+
+
+

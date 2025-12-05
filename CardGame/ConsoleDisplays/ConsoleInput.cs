@@ -1,6 +1,6 @@
 namespace CardGame.ConsoleDisplays;
 
-public class ConsoleConsoleInput(IConsoleGameUi ui) : IConsoleInput
+public class ConsoleInput(IConsoleGameUi ui) : IConsoleInput
 {
     public int GetMenuChoice(string prompt, int minValue, int maxValue)
     {
@@ -37,4 +37,7 @@ public class ConsoleConsoleInput(IConsoleGameUi ui) : IConsoleInput
         return string.IsNullOrWhiteSpace(name) ? defaultName : name;
     }
 }
+
+
+
 

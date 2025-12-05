@@ -11,8 +11,8 @@ public static class Program
     private const int UnoGame = 1;
     private const int PokerGame = 2;
     private const int Exit = 3;
-    private static readonly IConsoleGameUi UI = new ConsoleConsoleGameUi();
-    private static readonly IConsoleInput ConsoleInput = new ConsoleConsoleInput(UI);
+    private static readonly IConsoleGameUi UI = new ConsoleGameUi();
+    private static readonly IConsoleInput ConsoleInput = new ConsoleInput(UI);
 
     private static void Main()
     {

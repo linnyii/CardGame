@@ -2,7 +2,7 @@ using CardGame.Models;
 
 namespace CardGame.ConsoleDisplays;
 
-public class ConsoleConsoleGameUi : IConsoleGameUi
+public class ConsoleGameUi : IConsoleGameUi
 {
     public void DisplayMessage(string message)
     {
@@ -71,4 +71,7 @@ public class ConsoleConsoleGameUi : IConsoleGameUi
         }
     }
 }
+
+
+
 

@@ -43,7 +43,8 @@ public class UnoDeck : Deck<UnoCard>
 
     public void RePile()
     {
-        Cards = DisCardedCards;
+        Cards = new List<UnoCard>(DisCardedCards);
+        DisCardedCards.Clear();
         Shuffle();
     }
 }
