@@ -81,11 +81,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
         {
             case > 0:
             {
-                var cardToPlay = currentPlayer switch
-                {
-                    HumanPlayer<UnoCard> => GetHumanPlayerChoice(playableCards),
-                    _ => GetAiPlayerChoice(playableCards, currentPlayer)
-                };
+                var cardToPlay = currentPlayer.SelectCard(playableCards);
 
                 currentPlayer.Cards.Remove(cardToPlay);
                 _currentCard = cardToPlay;
@@ -123,26 +119,6 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
         if (player.HasCards()) return false;
         IsGameFinished = true;
         return true;
-    }
-
-    private UnoCard GetAiPlayerChoice(List<UnoCard> playableCards, Player<UnoCard> currentPlayer)
-    {
-        var cardToPlay = playableCards[Random.Shared.Next(playableCards.Count)];
-        UI.DisplayLine($"{currentPlayer.Name} plays: {cardToPlay}");
-        return cardToPlay;
-    }
-
-    private UnoCard GetHumanPlayerChoice(List<UnoCard> playableCards)
-    {
-        UI.DisplayEmptyLine();
-        UI.DisplayLine("Playable cards:");
-        for (var i = 0; i < playableCards.Count; i++)
-        {
-            UI.DisplayLine($"{i + 1}. {playableCards[i]}");
-        }
-
-        var choice = ConsoleInput.GetCardChoice("Select a card to play (enter number): ", playableCards.Count);
-        return playableCards[choice - 1];
     }
 
     private void MoveToNextPlayer()

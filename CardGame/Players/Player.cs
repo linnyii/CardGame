@@ -24,5 +24,7 @@ public abstract class Player<TCard>(string name, int? maxCards = null)
         }
         Cards.Add(card);
     }
+
+    public abstract TCard SelectCard(List<TCard> availableCards);
 }
 

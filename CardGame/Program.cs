@@ -88,7 +88,7 @@ public static class Program
                     break;
                 default:
                     UI.DisplayLine("Invalid choice, creating AI player by default.");
-                    players.Add(new AiPlayer<TCard>($"AI{playerCount + 1}", maxCards));
+                    players.Add(new AiPlayer<TCard>($"AI{playerCount + 1}", UI, maxCards));
                     break;
             }
         }
@@ -99,12 +99,12 @@ public static class Program
     private static AiPlayer<TCard> CreateAiPlayer<TCard>(int playerCount, int? maxCards = null)
     {
         var name = ConsoleInput.GetPlayerName("Enter AI name: ", $"AI{playerCount + 1}");
-        return new AiPlayer<TCard>(name, maxCards);
+        return new AiPlayer<TCard>(name, UI, maxCards);
     }
 
     private static HumanPlayer<TCard> CreateHumanPlayer<TCard>(int playerCount, int? maxCards = null)
     {
         var name = ConsoleInput.GetPlayerName("Enter player name: ", $"Player{playerCount + 1}");
-        return new HumanPlayer<TCard>(name, maxCards);
+        return new HumanPlayer<TCard>(name, UI, ConsoleInput, maxCards);
     }
 }

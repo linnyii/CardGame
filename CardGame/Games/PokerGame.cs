@@ -56,11 +56,7 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         
         foreach (var player in Players)
         {
-            var cardToPlay = player switch
-            {
-                HumanPlayer<PokerCard> => GetHumanPlayerChoice(player),
-                _ => GetAiPlayerChoice(player)
-            };
+            var cardToPlay = player.SelectCard(player.Cards);
 
             playedCardsPerRound[player] = cardToPlay;
             player.Cards.Remove(cardToPlay);
@@ -70,21 +66,6 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         UI.DisplayRoundWinner(roundWinner.Name);
         
         roundWinner.AddScore();
-    }
-
-    private PokerCard GetAiPlayerChoice(Player<PokerCard> player)
-    {
-        return player.Cards[Random.Shared.Next(player.Cards.Count)];
-    }
-
-    private PokerCard GetHumanPlayerChoice(Player<PokerCard> player)
-    {
-        UI.DisplayLine($"{player.Name}, please choose a card to play:");
-        UI.DisplayPokerHandCards(player.Cards);
-        
-        var choice = ConsoleInput.GetCardChoice("Please select a card (enter number): ", player.CardCount);
-        
-        return player.Cards[choice - 1];
     }
 
     private static Player<PokerCard> DetermineRoundWinner(Dictionary<Player<PokerCard>, PokerCard> playedCards)
