@@ -11,10 +11,29 @@ public abstract class Game<TCard>(IConsoleGameUi ui, List<Player<TCard>> players
 
     public void StartGame()
     {
+        Initialize();
+        Play();
+        Finish();
+    }
+
+    private void Initialize()
+    {
         DisplayGameStartMessage();
-        InitializeGame();
-        PreActionBeforePlayRounds();
+        InitializeDeck();
+        ShuffleDeck();
+        Ui.DisplayLine("Dealing cards...");
+        DealCardsToPlayers();
+        Ui.DisplayLine("Finished dealing cards");
+        AfterDealingCards();
+    }
+
+    private void Play()
+    {
         RunGameLoop();
+    }
+
+    private void Finish()
+    {
         DisplayFinalResults();
     }
     
@@ -26,16 +45,7 @@ public abstract class Game<TCard>(IConsoleGameUi ui, List<Player<TCard>> players
     public abstract void PlayRound();
     protected abstract Player<TCard>? GetFinalWinner();
     
-    private void InitializeGame()
-    {
-        InitializeDeck();
-        ShuffleDeck();
-        Ui.DisplayLine("Dealing cards...");
-        DealCardsToPlayers();
-        Ui.DisplayLine("Finished dealing cards");
-    }
-
-    protected virtual void PreActionBeforePlayRounds()
+    protected virtual void AfterDealingCards()
     {
     }
     

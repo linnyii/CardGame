@@ -43,7 +43,7 @@ public class UnoGame(IConsoleGameUi ui, List<Player<UnoCard>> players)
         }
     }
 
-    protected override void PreActionBeforePlayRounds()
+    protected override void AfterDealingCards()
     {
         _currentCard = _deck.DrawCard();
         Ui.DisplayLine($"Starting card: {_currentCard}");
