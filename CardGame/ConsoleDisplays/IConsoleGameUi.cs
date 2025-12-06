@@ -1,5 +1,3 @@
-using CardGame.Models;
-
 namespace CardGame.ConsoleDisplays;
 
 public interface IConsoleGameUi
@@ -14,7 +12,6 @@ public interface IConsoleGameUi
     void DisplayGameEnd();
     void DisplayRoundNumber(int roundNumber);
     void DisplayRoundWinner(string playerName);
-    void DisplayPokerHandCards(List<PokerCard> cards);
 }
 
 

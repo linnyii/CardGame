@@ -12,7 +12,7 @@ public abstract class Game<TCard>(IConsoleGameUi ui, List<Player<TCard>> players
     public void StartGame()
     {
         Initialize();
-        Play();
+        RunGameLoop();
         Finish();
     }
 
@@ -25,11 +25,6 @@ public abstract class Game<TCard>(IConsoleGameUi ui, List<Player<TCard>> players
         DealCardsToPlayers();
         Ui.DisplayLine("Finished dealing cards");
         AfterDealingCards();
-    }
-
-    private void Play()
-    {
-        RunGameLoop();
     }
 
     private void Finish()
