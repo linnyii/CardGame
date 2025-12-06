@@ -12,9 +12,7 @@ public abstract class Player<TCard>(string name, int? maxCards = null)
     {
         Score += 1;
     }
-    
-    public int CardCount => Cards.Count;
-    
+
     public bool HasCards() => Cards.Count > 0;
     
     public void ReceiveCard(TCard card)

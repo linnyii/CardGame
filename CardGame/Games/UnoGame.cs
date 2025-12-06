@@ -4,8 +4,8 @@ using CardGame.ConsoleDisplays;
 
 namespace CardGame.Games;
 
-public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<UnoCard>> players) 
-    : Game<UnoCard>(ui, consoleInput, players)
+public class UnoGame(IConsoleGameUi ui, List<Player<UnoCard>> players) 
+    : Game<UnoCard>(ui, players)
 {
     private readonly UnoDeck _deck = new();
     private UnoCard? _currentCard;
@@ -15,7 +15,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
     
     protected override void DisplayGameStartMessage()
     {
-        UI.DisplayGameStart("UNO Game");
+        Ui.DisplayGameStart("UNO Game");
     }
 
     protected override void InitializeDeck()
@@ -46,8 +46,8 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
     protected override void PreActionBeforePlayRounds()
     {
         _currentCard = _deck.DrawCard();
-        UI.DisplayLine($"Starting card: {_currentCard}");
-        UI.DisplayEmptyLine();
+        Ui.DisplayLine($"Starting card: {_currentCard}");
+        Ui.DisplayEmptyLine();
     }
 
     protected override void RunGameLoop()
@@ -63,15 +63,15 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
         var winner = GetFinalWinner();
         if (winner != null)
         {
-            UI.DisplayWinner(winner.Name);
+            Ui.DisplayWinner(winner.Name);
         }
     }
 
     public override void PlayRound()
     {
         var currentPlayer = GetCurrentPlayer();
-        UI.DisplayPlayerTurn(currentPlayer.Name);
-        UI.DisplayLine($"Current card: {_currentCard}");
+        Ui.DisplayPlayerTurn(currentPlayer.Name);
+        Ui.DisplayLine($"Current card: {_currentCard}");
         
         var playableCards = currentPlayer.Cards
             .Where(card => card.CanPlay(_currentCard!))
@@ -93,7 +93,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
             }
             default:
             {
-                UI.DisplayLine($"{currentPlayer.Name} has no playable cards, drawing a card...");
+                Ui.DisplayLine($"{currentPlayer.Name} has no playable cards, drawing a card...");
                 var drawnCard = _deck.DrawCard();
                 if (drawnCard == null)
                 {
@@ -106,7 +106,7 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
                     currentPlayer.Cards.Add(drawnCard);
                 }
 
-                UI.DisplayLine($"Drew: {drawnCard}, added to hand");
+                Ui.DisplayLine($"Drew: {drawnCard}, added to hand");
 
                 break;
             }

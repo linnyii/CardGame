@@ -3,12 +3,11 @@ using CardGame.ConsoleDisplays;
 
 namespace CardGame.Games;
 
-public abstract class Game<TCard>(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<TCard>> players)
+public abstract class Game<TCard>(IConsoleGameUi ui, List<Player<TCard>> players)
 {
     protected List<Player<TCard>> Players { get; } = players;
     protected bool IsGameFinished { get; set; }
-    protected IConsoleGameUi UI { get; } = ui;
-    protected IConsoleInput ConsoleInput { get; } = consoleInput;
+    protected IConsoleGameUi Ui { get; } = ui;
 
     public void StartGame()
     {
@@ -31,9 +30,9 @@ public abstract class Game<TCard>(IConsoleGameUi ui, IConsoleInput consoleInput,
     {
         InitializeDeck();
         ShuffleDeck();
-        UI.DisplayLine("Dealing cards...");
+        Ui.DisplayLine("Dealing cards...");
         DealCardsToPlayers();
-        UI.DisplayLine("Finished dealing cards");
+        Ui.DisplayLine("Finished dealing cards");
     }
 
     protected virtual void PreActionBeforePlayRounds()
@@ -42,11 +41,11 @@ public abstract class Game<TCard>(IConsoleGameUi ui, IConsoleInput consoleInput,
     
     protected virtual void DisplayFinalResults()
     {
-        UI.DisplayGameEnd();
+        Ui.DisplayGameEnd();
         var winner = GetFinalWinner();
         if (winner != null)
         {
-            UI.DisplayWinner(winner.Name, winner.Score);
+            Ui.DisplayWinner(winner.Name, winner.Score);
         }
     }
 }

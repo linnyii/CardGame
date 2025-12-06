@@ -4,8 +4,8 @@ using CardGame.ConsoleDisplays;
 
 namespace CardGame.Games;
 
-public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<PokerCard>> players) 
-    : Game<PokerCard>(ui, consoleInput, players)
+public class PokerGame(IConsoleGameUi ui, List<Player<PokerCard>> players) 
+    : Game<PokerCard>(ui, players)
 {
     private readonly PokerDeck _deck = new();
     private const int TotalRounds = 13;
@@ -15,8 +15,8 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
     
     protected override void DisplayGameStartMessage()
     {
-        UI.DisplayGameStart("Poker Game");
-        UI.DisplayLine($"Total of {TotalRounds} rounds will be played");
+        Ui.DisplayGameStart("Poker Game");
+        Ui.DisplayLine($"Total of {TotalRounds} rounds will be played");
     }
 
     protected override void InitializeDeck()
@@ -45,7 +45,7 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         while (_currentRound < TotalRounds)
         {
             _currentRound++;
-            UI.DisplayRoundNumber(_currentRound);
+            Ui.DisplayRoundNumber(_currentRound);
             PlayRound();
         }
     }
@@ -63,7 +63,7 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         }
 
         var roundWinner = DetermineRoundWinner(playedCardsPerRound);
-        UI.DisplayRoundWinner(roundWinner.Name);
+        Ui.DisplayRoundWinner(roundWinner.Name);
         
         roundWinner.AddScore();
     }
