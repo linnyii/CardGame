@@ -6,9 +6,10 @@ public class AiPlayer<TCard>(string name, IConsoleGameUi ui, int? maxCards = nul
 {
     private IConsoleGameUi Ui { get; } = ui;
 
-    public override TCard SelectCard(List<TCard> availableCards)
+    protected override TCard ProcessCardSelect()
     {
-        var selectedCard = availableCards[Random.Shared.Next(availableCards.Count)];
+        var selectableCards = GetSelectableCards();
+        var selectedCard = selectableCards[Random.Shared.Next(selectableCards.Count)];
         Ui.DisplayLine($"{Name} plays: {selectedCard}");
         return selectedCard;
     }

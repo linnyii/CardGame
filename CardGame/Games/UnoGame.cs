@@ -81,7 +81,8 @@ public class UnoGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Player<
         {
             case > 0:
             {
-                var cardToPlay = currentPlayer.SelectCard(playableCards);
+                currentPlayer.SetSelectableCards(playableCards);
+                var cardToPlay = currentPlayer.SelectCard();
 
                 currentPlayer.Cards.Remove(cardToPlay);
                 _currentCard = cardToPlay;

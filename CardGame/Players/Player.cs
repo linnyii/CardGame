@@ -6,6 +6,7 @@ public abstract class Player<TCard>(string name, int? maxCards = null)
     public int Score { get; private set; }
     public List<TCard> Cards { get; } = [];
     private int? MaxCards { get; } = maxCards;
+    private List<TCard>? _selectableCards;
 
     public void AddScore()
     {
@@ -25,6 +26,28 @@ public abstract class Player<TCard>(string name, int? maxCards = null)
         Cards.Add(card);
     }
 
-    public abstract TCard SelectCard(List<TCard> availableCards);
+    public void SetSelectableCards(List<TCard> cards)
+    {
+        _selectableCards = cards;
+    }
+
+    protected List<TCard> GetSelectableCards()
+    {
+        return _selectableCards ?? Cards;
+    }
+
+    private void ClearSelectableCards()
+    {
+        _selectableCards = null;
+    }
+
+    public TCard SelectCard()
+    {
+        var card = ProcessCardSelect();
+        ClearSelectableCards();
+        return card;
+    }
+
+    protected abstract TCard ProcessCardSelect();
 }
 

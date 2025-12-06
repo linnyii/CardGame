@@ -8,18 +8,20 @@ public class HumanPlayer<TCard>(string name, IConsoleGameUi ui, IConsoleInput co
     private IConsoleGameUi Ui { get; } = ui;
     private IConsoleInput ConsoleInput { get; } = consoleInput;
 
-    public override TCard SelectCard(List<TCard> availableCards)
+    protected override TCard ProcessCardSelect()
     {
+        var selectableCards = GetSelectableCards();
+        
         Ui.DisplayLine($"{Name}, please choose a card to play:");
         
-        for (var i = 0; i < availableCards.Count; i++)
+        for (var i = 0; i < selectableCards.Count; i++)
         {
-            Ui.DisplayLine($"{i + 1}. {availableCards[i]}");
+            Ui.DisplayLine($"{i + 1}. {selectableCards[i]}");
         }
 
-        var choice = ConsoleInput.GetCardChoice("Select a card to play (enter number): ", availableCards.Count);
+        var choice = ConsoleInput.GetCardChoice("Select a card to play (enter number): ", selectableCards.Count);
         
-        return availableCards[choice - 1];
+        return selectableCards[choice - 1];
     }
 }
 

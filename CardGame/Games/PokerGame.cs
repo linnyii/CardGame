@@ -56,7 +56,7 @@ public class PokerGame(IConsoleGameUi ui, IConsoleInput consoleInput, List<Playe
         
         foreach (var player in Players)
         {
-            var cardToPlay = player.SelectCard(player.Cards);
+            var cardToPlay = player.SelectCard();
 
             playedCardsPerRound[player] = cardToPlay;
             player.Cards.Remove(cardToPlay);
